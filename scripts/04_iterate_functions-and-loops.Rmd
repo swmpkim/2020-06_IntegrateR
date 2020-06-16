@@ -414,7 +414,7 @@ ggplot(wq_trimmed) +
 ```
 
 
-Say we want to make this plot for a variety of pairs of parameters, and our data frame may not always be called `wq_trimmmed`. So these are three arguments that we want to be able to specify. When we use RStudio's menu to extract a function, it gives us four - it includes the data frame as the first argument - and it looks like this:    
+Say we want to make this plot for a variety of pairs of parameters, with a third to provide color. So these are three arguments that we want to be able to specify. When we use RStudio's menu to extract a function, it gives us four - it includes the data frame as the first argument (it may not always be called `wq_trimmmed`) - and it looks like this:    
 
 ```{r}
 my_plot <- function(wq_trimmed, sal, do_pct, station_code) {
@@ -468,7 +468,7 @@ Note that to facet, it's not quite as simple, and you have to use `var( {{ }} )`
 ```{r}
 my_plot <- function(data, param1, param2, param3) {
   ggplot(data) +
-    geom_point(aes(x = {{param1}}, y = {{param2}}, col = factor({{param3}}))) +
+    geom_point(aes(x = {{param1}}, y = {{param2}}, col = {{param3}})) +
     facet_wrap(vars( {{param3}} ))
 }
 
