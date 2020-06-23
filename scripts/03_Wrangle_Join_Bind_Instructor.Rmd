@@ -155,3 +155,128 @@ fish %>%
               values_from = total)
 ```
 
+
+# Toy data for binding  
+
+```{r}
+band2 <- tribble(
+  ~first, ~last, 
+  "Mick", "Jagger",
+  "John", "Lennon", 
+  "Paul", "McCartney"
+)
+
+band3 <- tribble(
+  ~band, ~plays,
+  "Stones", "NA",
+  "Beatles", "guitar", 
+  "Beatles", "bass"
+)
+```
+
+## cbind glues columns together  
+
+```{r}
+cbind(band2, band3)
+```
+
+Which is.... okay.... when you know everything matches. But it could lead to problems if you have the same number of rows, but they mean something different:  
+
+```{r}
+cbind(band, instrument)
+```
+
+
+## dplyr::bind_cols is the tidyverse alternative  
+
+```{r}
+bind_cols(band2, band3)
+```
+
+
+# rbind and dplyr::bind_rows  
+
+Where the tidyverse versions of binding really get smart is row binding. Again, the base version only binds on position. So we can try to do this:  
+
+```{r, eval = FALSE}
+rbind(band2, band3)
+```
+
+Fortunately, it recognizes that the column names are different, so it throws an error.
+
+dplyr's bind_rows() binds them anyway, and inserts NAs where columns don't match. Note that this is not quite as smart as you might hope, and sometimes you probably actually want one of the join functions.    
+
+```{r}
+bind_rows(band2, band3)
+bind_rows(band, instrument)
+```
+
+
+
+# More data  
+
+We're going to read in the same files, two different ways. I've already coded this for you; just run this code chunk.  
+
+```{r}
+bh2016 <- read.csv(here::here("data", "gndbhnut2016.csv"),
+                   stringsAsFactors = FALSE)
+bh2017 <- read.csv(here::here("data", "gndbhnut2017.csv"),
+                   stringsAsFactors = FALSE)
+bh2018 <- read.csv(here::here("data", "gndbhnut2018.csv"),
+                   stringsAsFactors = FALSE)
+
+bh_list <- list("bh2016" = bh2016, 
+                "bh2017" = bh2017, 
+                "bh2018" = bh2018)
+```
+
+
+# Your Turn 3  
+
+Bind the data frames `bh2016` and `bh2017` into one data frame. First use `rbind`, then use `bind_rows`. Do you see any difference? 
+
+```{r}
+bh_rbind <- rbind(bh2016, bh2017)
+bh_bindrows <- bind_rows(bh2016, bh2017)
+
+glimpse(bh_rbind)
+glimpse(bh_bindrows)
+```
+
+
+Now try it with all 3 bh data frames. (Ignore the list for now).  
+
+```{r}
+bh_rbind <- rbind(bh2016, bh2017, bh2018)
+bh_bindrows <- bind_rows(bh2016, bh2017, bh2018)
+
+glimpse(bh_rbind)
+dim(bh_rbind)
+
+glimpse(bh_bindrows)
+dim(bh_bindrows)
+```
+
+
+# Binding together a list  
+
+This is the really fun thing about dplyr::bind_rows.  
+
+Predict what will happen when you run the following code chunk, then see if you are right:  
+
+```{r}
+bh_bindrows <- bind_rows(bh_list)
+glimpse(bh_bindrows)
+dim(bh_bindrows)
+```
+
+
+What will happen if you use rbind instead?  
+
+```{r}
+bh_rbind <- rbind(bh_list)
+glimpse(bh_rbind)
+dim(bh_rbind)
+```
+
+The moral of the story is, `bind_rows` is more powerful than `rbind`, and you should always pay attention to what you're doing!  
