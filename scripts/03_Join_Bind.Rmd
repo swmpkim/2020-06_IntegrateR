@@ -3,7 +3,7 @@ title: "Advanced Wrangling: Joins"
 output: html_document
 ---
 
-In this lesson, we will go through some different ways to join data frames together. This RMarkdown file is used in conjunction with the "Joins.pptx" slide deck.  
+In this lesson, we will go through some different ways to join data frames together. This RMarkdown file is used in conjunction with the "03_Joins.pptx" slide deck.  
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
