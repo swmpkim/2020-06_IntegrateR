@@ -1,0 +1,157 @@
+---
+title: "Advanced Wrangling: Joins"
+output: html_document
+---
+
+In this lesson, we will go through some different ways to join data frames together. This RMarkdown file is used in conjunction with the "Joins.pptx" slide deck.  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+# Your Turn 1: Make the data  
+
+We will be using a few data frames here. First, run this chunk of code to create the data frames you saw in the slide show. Examine the data frames.      
+
+```{r}
+band <- tribble(
+  ~name,     ~band,
+  "Mick",  "Stones",
+  "John", "Beatles",
+  "Paul", "Beatles"
+)
+
+instrument <- tribble(
+  ~name,   ~plays,
+  "John", "guitar",
+  "Paul",   "bass",
+  "Keith", "guitar"
+)
+
+instrument2 <- tribble(
+  ~artist,   ~plays,
+  "John", "guitar",
+  "Paul",   "bass",
+  "Keith", "guitar"
+)
+```
+
+
+Now, read in two files, both in your `data` folder. Make sure column names are all lower case, and there are underscores rather than periods or spaces (hint: `clean_names()` from Shannon's favorite package will help you here)      
+
++  fish  =  `guana_fish_subset.csv`  
++  critters  =  `critter_types.csv`  
+
+```{r}
+fish <- read.csv(here::here("data", "guana_fish_subset.csv"),
+                 stringsAsFactors = FALSE) %>% 
+  janitor::clean_names()
+critters <- read.csv(here::here("data", "critter_types.csv"),
+                     stringsAsFactors = FALSE)
+```
+
+
+# Code from slides  
+
+## Left Join  
+
+Keeps all rows from the "left" (first) data frame, and inserts columns from the right data frame. Inserts "NA" if there is no match in the right data frame.    
+
+```{r}
+band %>% 
+  left_join(instrument, by = "name")
+```
+
+.... is the same as:  
+
+```{r}
+left_join(band, instrument, by = "name")
+```
+
+
+## Right Join  
+
+Keeps all rows from the "right" (second) data frame.  
+
+```{r}
+band %>% 
+  right_join(instrument, by = "name")
+```
+
+
+## Full Join  
+
+Keeps all rows from both data frames.  
+
+```{r}
+band %>% 
+  full_join(instrument, by = "name")
+```
+
+
+## Inner Join  
+
+Keeps only rows that are complete in both data frames.  
+
+```{r}
+band %>% 
+  inner_join(instrument, by = "name")
+```
+
+
+# Different names in different data frames  
+
+What if we want to join two data frames, but the column we want to match on is named differently in each? 
+
+```{r}
+names(band)
+names(instrument2)
+```
+
+"name" in one data frame is the same as "artist" in the other.  
+
+Here's how you identify them:  
+
+```{r}
+band %>% 
+  left_join(instrument2, by = c("name" = "artist"))
+```
+
+
+# Your Turn 2: Join Guana Fish data to identifying information  
+
+Were more fish or invertebrates caught in this dataset? Does time of day (day vs. night) matter?  
+
+This has multiple parts. Do them separately at first if you need to, but then see if you can do this in a single series of pipes.  
+
+1.  Pivot the `fish` data frame to a longer version, where the count of each species within each sample event is in its own row. (Hint: remember you can select columns to pivot with `start:finish` notation.)  
+2.  Join the `critters` data frame to this long one, so that each row also identifies whether the critter is a fish or an invertebrate.  
+3.  Come up with a grand total number of fish vs. invertebrates caught, for day vs. night. (Hint: remember `group_by` and `summarize`!)
+
+```{r}
+fish %>% 
+  pivot_longer(cols = 2:20,
+               names_to = "species",
+               values_to = "count") %>% 
+  left_join(critters, by = "species") %>% 
+  group_by(type, diel) %>% 
+  summarize(total = sum(count))
+```
+
+
+For bonus points, use a different pivot function to turn fish/invert into column names, so there are only two rows in the result.  
+
+```{r}
+fish %>% 
+  pivot_longer(cols = 2:20,
+               names_to = "species",
+               values_to = "count") %>% 
+  left_join(critters, by = "species") %>% 
+  group_by(type, diel) %>% 
+  summarize(total = sum(count)) %>% 
+  pivot_wider(names_from = type,
+              values_from = total)
+```
+
