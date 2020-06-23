@@ -39,17 +39,18 @@ instrument2 <- tribble(
 ```
 
 
-Now, read in two files, both in your `data` folder. Make sure column names are all lower case, and there are underscores rather than periods or spaces (hint: `clean_names()` from Shannon's favorite package will help you here)      
+Now, read in two files, both in your `data` folder. Make sure column names are all lower case and use underscores rather than periods or spaces (hint: `clean_names()` from Shannon's favorite package will help you here)      
 
 +  fish  =  `guana_fish_subset.csv`  
 +  critters  =  `critter_types.csv`  
 
 ```{r}
-fish <- read.csv(here::here("data", "guana_fish_subset.csv"),
-                 stringsAsFactors = FALSE) %>% 
-  janitor::clean_names()
-critters <- read.csv(here::here("data", "critter_types.csv"),
-                     stringsAsFactors = FALSE)
+ 
+
+
+
+
+  
 ```
 
 
@@ -131,28 +132,29 @@ This has multiple parts. Do them separately at first if you need to, but then se
 3.  Come up with a grand total number of fish vs. invertebrates caught, for day vs. night. (Hint: remember `group_by` and `summarize`!)
 
 ```{r}
-fish %>% 
-  pivot_longer(cols = 2:20,
-               names_to = "species",
-               values_to = "count") %>% 
-  left_join(critters, by = "species") %>% 
-  group_by(type, diel) %>% 
-  summarize(total = sum(count))
+ 
+  
+               
+                
+   
+   
+  
+
 ```
 
 
 For bonus points, use a different pivot function to turn fish/invert into column names, so there are only two rows in the result.  
 
 ```{r}
-fish %>% 
-  pivot_longer(cols = 2:20,
-               names_to = "species",
-               values_to = "count") %>% 
-  left_join(critters, by = "species") %>% 
-  group_by(type, diel) %>% 
-  summarize(total = sum(count)) %>% 
-  pivot_wider(names_from = type,
-              values_from = total)
+ 
+  
+               
+                
+   
+   
+   
+  
+
 ```
 
 
@@ -259,28 +261,27 @@ bh_list <- list("bh2016" = bh2016,
 
 # Your Turn 4  
 
-Bind the data frames `bh2016` and `bh2017` into one data frame. First use `rbind`, then use `bind_rows`. Do you see any difference? 
+Bind the data frames `bh2016` and `bh2017` into one data frame. First use `rbind`, then use `bind_rows`. Do you see any difference? Use both `glimpse()` and `dim()` to compare.    
 
 ```{r}
-bh_rbind <- rbind(bh2016, bh2017)
-bh_bindrows <- bind_rows(bh2016, bh2017)
+bh_rbind <- 
+bh_bindrows <- 
 
-glimpse(bh_rbind)
-glimpse(bh_bindrows)
+
+
 ```
 
 
-Now try it with all 3 bh data frames. (Ignore the list for now).  
+Now try it with all 3 bh data frames. (Ignore the list for now). Use both `glimpse()` and `dim()` to compare.   
 
 ```{r}
-bh_rbind <- rbind(bh2016, bh2017, bh2018)
-bh_bindrows <- bind_rows(bh2016, bh2017, bh2018)
+bh_rbind <- 
+bh_bindrows <- 
 
-glimpse(bh_rbind)
-dim(bh_rbind)
 
-glimpse(bh_bindrows)
-dim(bh_bindrows)
+  
+  
+  
 ```
 
 So far so good; they're working the same way on these, as expected. (Side recommendation: always verify that your code does what you expect it to! And if it doesn't, figure out why.)
